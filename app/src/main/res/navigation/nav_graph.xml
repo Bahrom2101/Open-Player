@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="uz.mobilestudio.openplayer.libraryFragments.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/pagerFragment"
+        android:name="uz.mobilestudio.openplayer.libraryFragments.PagerFragment"
+        android:label="fragment_pager"
+        tools:layout="@layout/fragment_pager" />
+    <fragment
+        android:id="@+id/albumFragment"
+        android:name="uz.mobilestudio.openplayer.libraryFragments.AlbumFragment"
+        android:label="fragment_album"
+        tools:layout="@layout/fragment_album" />
+    <fragment
+        android:id="@+id/playMusicFragment"
+        android:name="uz.mobilestudio.openplayer.libraryFragments.PlayMusicFragment"
+        android:label="fragment_play_music"
+        tools:layout="@layout/fragment_play_music" />
+    <fragment
+        android:id="@+id/netPagerFragment"
+        android:name="uz.mobilestudio.openplayer.netFragments.NetPagerFragment"
+        android:label="fragment_net_pager"
+        tools:layout="@layout/fragment_net_pager" />
+    <fragment
+        android:id="@+id/netMusicFragment"
+        android:name="uz.mobilestudio.openplayer.netFragments.NetMusicFragment"
+        android:label="fragment_net_music"
+        tools:layout="@layout/fragment_net_music" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="uz.mobilestudio.openplayer.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+</navigation>

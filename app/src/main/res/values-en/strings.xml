@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Open Player</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="song">Song</string>
+    <string name="artist">Artist</string>
+    <string name="album">Album</string>
+    <string name="library">Library</string>
+    <string name="explore">Explore</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="saved">Saved</string>
+    <string name="global">Internet</string>
+    <string name="uploading_process_is_started_You_will_have_permission_after_uploading">Uploading process is started.You will have permission after uploading</string>
+    <string name="uploading_on_process">Uploading in process</string>
+    <string name="internet_is_not_connected">Internet is not connected</string>
+    <string name="error_occurred">Error occurred</string>
+    <string name="report">Report</string>
+    <string name="spam">Spam</string>
+    <string name="violence">Violence</string>
+    <string name="pornography">Pornography</string>
+    <string name="other">Other</string>
+    <string name="report_has_sent">Report has sent</string>
+    <string name="is_on_playing_process">is on playing process</string>
+    <string name="uploaded">Uploaded</string>
+    <string name="describe_your_report">Describe your report</string>
+    <string name="send_report">Send report</string>
+    <string name="give_me_one_music_at_least_per_day_for_using_other_musics">Give me one music at least per day for using other musics</string>
+    <string name="save">Save</string>
+    <string name="unsave">Unsave</string>
+    <string name="download">Download</string>
+    <string name="please_give_permission_for_reading_audios_from_storage">Please give permission for reading audios from storage</string>
+    <string name="maximum_size_might_be_20_mb"><![CDATA[Maximum size have to be 20 MB]]></string>
+    <string name="downloaded_file_not_found">Downloaded file not found</string>
+    <string name="upload_one_music_to_download">Upload one music to download</string>
+    <string name="downloading_process_is_started"><![CDATA[Downloading process is started]]></string>
+    <string name="audio_downloaded"><![CDATA[Downloaded]]></string>
+</resources>

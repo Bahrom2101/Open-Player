@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "364571702965",
+    "project_id": "foropenplayer",
+    "storage_bucket": "foropenplayer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364571702965:android:2fe2ea1fe286b45460b0fc",
+        "android_client_info": {
+          "package_name": "uz.mobilestudio.openplayer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "364571702965-eouchk3hiukgft327t9n0lr658bk1pfa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8rt4zL8cKJ6dCC7ROB1LxGjaGVWaRPPA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "364571702965-eouchk3hiukgft327t9n0lr658bk1pfa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

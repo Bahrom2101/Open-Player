@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Open Player</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="song"><![CDATA[Qo\'shiq]]></string>
+    <string name="artist">Artist</string>
+    <string name="album">Album</string>
+    <string name="library">Kutubxona</string>
+    <string name="explore">Umumiy</string>
+    <string name="downloaded">Yuklangan</string>
+    <string name="saved">Saqlangan</string>
+    <string name="global">Internet</string>
+    <string name="uploading_process_is_started_You_will_have_permission_after_uploading"><![CDATA[Yuborish boshlandi.Yuborilgandan so\'ng ruxsat beriladi]]></string>
+    <string name="uploading_on_process"><![CDATA[Yuborish jarayoni ketyapti]]></string>
+    <string name="internet_is_not_connected">Internet yo\'q</string>
+    <string name="error_occurred"><![CDATA[Xatolik]]></string>
+    <string name="report"><![CDATA[Shikoyat]]></string>
+    <string name="spam">Spam</string>
+    <string name="violence">Vaxshiylik</string>
+    <string name="pornography">Pornografiya</string>
+    <string name="other">Boshqa</string>
+    <string name="report_has_sent">Shikoyat yuborildi</string>
+    <string name="is_on_playing_process">Jarayonda</string>
+    <string name="uploaded">Yuborildi</string>
+    <string name="describe_your_report"><![CDATA[Shikoyatingizni kiriting]]></string>
+    <string name="send_report"><![CDATA[Jo\'natish]]></string>
+    <string name="give_me_one_music_at_least_per_day_for_using_other_musics"><![CDATA[Boshqa musiqalarni eshitish uchun bir dona musiqa jo\'natishingiz kerak bo\'ladi]]></string>
+    <string name="save">Saqlash</string>
+    <string name="unsave">Chiqarish</string>
+    <string name="download">Yuklash</string>
+    <string name="please_give_permission_for_reading_audios_from_storage">Iltimos tugmani bosing va qurilma xotirasiga ruxsat bering</string>
+    <string name="maximum_size_might_be_20_mb"><![CDATA[Maksimum hajm 20 MB bo\'lsin]]></string>
+    <string name="downloaded_file_not_found">Yuklangan fayl topilmadi</string>
+    <string name="upload_one_music_to_download">Yuklash uchun bitta audio yuboring</string>
+    <string name="downloading_process_is_started"><![CDATA[Yuklash boshlandi]]></string>
+    <string name="audio_downloaded"><![CDATA[Yuklandi]]></string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/by_type"
+        android:title="Type"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/by_isChecked"
+        android:title="Is Checked"
+        app:showAsAction="always" />
+
+</menu>

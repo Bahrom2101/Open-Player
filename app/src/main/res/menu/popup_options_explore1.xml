@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/save1"
+        android:icon="@drawable/ic_bookmark_fill"
+        android:title="@string/unsave"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/download1"
+        android:icon="@drawable/ic_download"
+        android:title="@string/download"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/report1"
+        android:icon="@drawable/ic_report"
+        android:title="@string/report"
+        app:showAsAction="always" />
+</menu>
