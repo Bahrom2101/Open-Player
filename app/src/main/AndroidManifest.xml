@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="uz.mobilestudio.openplayer">
+    package="jabborovbahrom.openplayer">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -19,24 +19,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OpenPlayer">
         <activity
-            android:name=".admin.ReportInfoActivity"
+            android:name="uz.jabborovbahrom.openplayer.admin.ReportInfoActivity"
             android:exported="true" />
         <activity
-            android:name=".admin.AdminActivity"
+            android:name="uz.jabborovbahrom.openplayer.admin.AdminActivity"
             android:exported="true">
+
+        </activity>
+        <activity
+            android:name="uz.jabborovbahrom.openplayer.SplashActivity"
+            android:noHistory="true">
+
+        </activity>
+        <activity android:name="uz.jabborovbahrom.openplayer.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SplashActivity"
-            android:noHistory="true"></activity>
-        <activity android:name=".MainActivity"></activity>
 
-        <service android:name=".services.SongService" />
-        <service android:name=".services.UploadService" />
+        <service android:name="uz.jabborovbahrom.openplayer.services.SongService" />
+        <service android:name="uz.jabborovbahrom.openplayer.services.UploadService" />
     </application>
 
 </manifest>

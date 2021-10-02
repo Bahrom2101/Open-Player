@@ -7,7 +7,7 @@
     android:background="@color/image_back_color"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".SplashActivity">
+    tools:context="uz.jabborovbahrom.openplayer.SplashActivity">
 
     <TextView
         android:id="@+id/tv"

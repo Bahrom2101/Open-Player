@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="horizontal"
-    tools:context=".admin.PermissionFragment">
+    tools:context="uz.jabborovbahrom.openplayer.admin.PermissionFragment">
 
     <TextView
         android:id="@+id/tv"

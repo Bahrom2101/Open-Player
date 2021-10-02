@@ -10,7 +10,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "uz.mobilestudio.openplayer"
+        applicationId "uz.jabborovbahrom.openplayer"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 2
