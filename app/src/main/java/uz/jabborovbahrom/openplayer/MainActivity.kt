@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity() {
 
             binding.bottomNavigation.setupWithNavController(navController)
 
-            binding.bottomNavigation.setOnNavigationItemSelectedListener {
+            binding.bottomNavigation.setOnItemSelectedListener {
                 when (it.itemId) {
                     R.id.library -> {
                         navController.popBackStack()
