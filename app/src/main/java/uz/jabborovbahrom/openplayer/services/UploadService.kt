@@ -1,11 +1,16 @@
 package uz.jabborovbahrom.openplayer.services
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
+import androidx.work.WorkManager
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -16,9 +21,10 @@ import uz.jabborovbahrom.openplayer.entity.SongUploaded
 import uz.jabborovbahrom.openplayer.models.SongFirebase
 import uz.jabborovbahrom.openplayer.utils.Utils
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 
-class UploadService : Service() {
+class UploadService(var context: Context,workerParameters: WorkerParameters) : Worker(context,workerParameters) {
 
     lateinit var firebaseFirestore: FirebaseFirestore
     lateinit var firebaseStorage: FirebaseStorage
@@ -26,31 +32,16 @@ class UploadService : Service() {
     lateinit var appDatabase: AppDatabase
     private val TAG = "UploadService"
 
-    companion object {
-        var isUploading = false
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        appDatabase = AppDatabase.getInstance(this)
+    override fun doWork(): Result {
+        appDatabase = AppDatabase.getInstance(context)
         firebaseFirestore = FirebaseFirestore.getInstance()
         firebaseStorage = FirebaseStorage.getInstance()
         reference = firebaseStorage.getReference("audios")
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        isUploading = true
-        val bundle = intent?.extras?.getBundle("bundle")
-        val song = bundle?.getSerializable("song") as Song
-        val day = bundle.getInt("day", -1)
+        val randomSong = getRandomSong()
         try {
             val uid = UUID.randomUUID().toString()
-            val audioFile = File(song.path)
-            MediaScannerConnection.scanFile(this,
+            val audioFile = File(randomSong.path)
+            MediaScannerConnection.scanFile(context,
                 arrayOf(audioFile.absolutePath),
                 null,
                 MediaScannerConnection.OnScanCompletedListener { _: String?, uri: Uri ->
@@ -66,11 +57,11 @@ class UploadService : Service() {
                                 val time = calendar.timeInMillis
                                 val songFirebase = SongFirebase(
                                     uid,
-                                    song.displayName,
-                                    song.title,
-                                    song.artist,
-                                    song.duration,
-                                    song.size,
+                                    randomSong.displayName,
+                                    randomSong.title,
+                                    randomSong.artist,
+                                    randomSong.duration,
+                                    randomSong.size,
                                     audioUrl,
                                     isPlaying = false,
                                     isCheckedByAdmin = false,
@@ -81,38 +72,39 @@ class UploadService : Service() {
                                     .document(uid)
                                     .set(songFirebase)
                                     .addOnSuccessListener {
-                                        val songUploaded = SongUploaded(song.mediaStoreId)
+                                        val songUploaded = SongUploaded(randomSong.mediaStoreId)
                                         appDatabase.songUploadedDao().addSong(songUploaded)
+                                        val forDay = SimpleDateFormat("dd")
+                                        val day = forDay.format(calendar.time).toInt()
                                         Utils.uploadSong(
                                             day,
-                                            song.mediaStoreId,
-                                            this
+                                            randomSong.mediaStoreId,
+                                            context
                                         )
-                                        isUploading = false
-                                        Toast.makeText(
-                                            this,
-                                            getString(R.string.uploaded),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        if (!Utils.getWork(context)) {
+                                            Utils.setWork(true,context)
+                                        }
+                                        Log.d("TAGg", "doWork: Uploaded")
                                     }.addOnFailureListener {
-                                        isUploading = false
-                                        Toast.makeText(
-                                            this,
-                                            getString(R.string.error_occurred),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     }
                             }?.addOnFailureListener {
-                                isUploading = false
                             }
                         }
                     }.addOnFailureListener {
-                        isUploading = false
                     }
                 })
         } catch (e: Exception) {
-            isUploading = false
         }
-        return super.onStartCommand(intent, flags, startId)
+        return Result.success()
     }
+
+    private fun getRandomSong() : Song {
+        val song = appDatabase.songDao().getRandomSong()[0]
+        return if (song.size <= 20000000) {
+            song
+        } else {
+            getRandomSong()
+        }
+    }
+
 }

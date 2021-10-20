@@ -49,4 +49,7 @@ interface SongDao {
 
     @Query("select *from songs_table where media_store_id=(select max(media_store_id) from songs_table)")
     fun getLastSong(): Song
+
+    @Query("SELECT * FROM songs_table ORDER BY RANDOM() LIMIT 1")
+    fun getRandomSong() : List<Song>
 }

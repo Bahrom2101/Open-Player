@@ -18,6 +18,25 @@ import java.net.URI
 object Utils {
     lateinit var sharedPreferences: SharedPreferences
 
+    fun getWork(context: Context): Boolean {
+        sharedPreferences = context.getSharedPreferences("OPEN_PLAYER_ATTR", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("isWorking", false)
+    }
+
+    fun setWork(isWorking: Boolean, context: Context) {
+        sharedPreferences = context.getSharedPreferences("OPEN_PLAYER_ATTR", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean("isWorking", isWorking).apply()
+    }
+    fun getPermission(context: Context): Boolean {
+        sharedPreferences = context.getSharedPreferences("OPEN_PLAYER_ATTR", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("permission", false)
+    }
+
+    fun setPermission(permission: Boolean, context: Context) {
+        sharedPreferences = context.getSharedPreferences("OPEN_PLAYER_ATTR", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean("permission", permission).apply()
+    }
+
     fun getIsShuffle(context: Context): Boolean {
         sharedPreferences = context.getSharedPreferences("OPEN_PLAYER_ATTR", Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean("isShuffle", false)
@@ -48,11 +67,6 @@ object Utils {
         sharedPreferences.edit().putLong("songId", songId).apply()
     }
 
-    fun getUploadedDay(context: Context): Int {
-        sharedPreferences = context.getSharedPreferences("OPEN_PLAYER_ATTR", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("uploadedDay", -1)
-    }
-
     fun setLanguage(lang: String, context: Context) {
         sharedPreferences = context.getSharedPreferences("OPEN_PLAYER_ATTR", Context.MODE_PRIVATE)
         sharedPreferences.edit().putString("lang", lang).apply()
@@ -67,73 +81,6 @@ object Utils {
         sharedPreferences = context.getSharedPreferences("OPEN_PLAYER_ATTR", Context.MODE_PRIVATE)
         sharedPreferences.edit().putLong("uploadedSongId", songId).apply()
         sharedPreferences.edit().putInt("uploadedDay", day).apply()
-    }
-
-    fun downloadFileToSong(context: Context, songPath: String): Song {
-        var song: Song? = null
-        val artworkUri = Uri.parse("content://media/external/audio/albumart")
-        val path1: String = File(URI(songPath).path).canonicalPath
-        val c: Cursor = context.contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, arrayOf(
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.ALBUM_ID,
-                MediaStore.Audio.Media.SIZE
-            ),
-            MediaStore.Audio.Media.DATA + " = ?", arrayOf(
-                path1
-            ),
-            ""
-        )!!
-
-        if (null == c) {
-            // ERROR
-        }
-
-        while (c.moveToNext()) {
-            val mediaStoreId = c.getLong(c.getColumnIndex(MediaStore.Audio.Media._ID))
-            val displayName = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-            val title = c.getString(c.getColumnIndex(MediaStore.Audio.Media.TITLE))
-            var artist = c.getString(c.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-            val path = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DATA))
-            val duration = c.getInt(c.getColumnIndex(MediaStore.Audio.Media.DURATION)) / 1000
-            var album = c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-            val albumId = c.getLong(c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-            val size = c.getInt(c.getColumnIndex(MediaStore.Audio.Media.SIZE))
-            val coverArt = ContentUris.withAppendedId(artworkUri, albumId).toString()
-            val contentUri: Uri = ContentUris.withAppendedId(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                mediaStoreId
-            )
-            if (artist == null) {
-                artist = "artist"
-            }
-            if (album == null) {
-                album = "album"
-            }
-            song = Song(
-                mediaStoreId,
-                contentUri.toString(),
-                displayName,
-                title,
-                artist,
-                path,
-                duration,
-                album,
-                albumId,
-                size,
-                coverArt,
-                0
-            )
-            println("song -> $song")
-            return song
-        }
-        return song!!
     }
 
     fun getAlbumArt(context: Context, album_id: Long?): Bitmap? {
@@ -156,19 +103,4 @@ object Utils {
         }
         return bm
     }
-
-//    private var resultLauncher =
-//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                // There are no request codes
-//                val data: Intent? = result.data
-//            }
-//        }
-//
-//    fun openSomeActivityForResult() {
-//        val intent = Intent()
-//        intent.type = "audio/*"
-//        intent.action = Intent.ACTION_GET_CONTENT
-//        resultLauncher.launch(intent)
-//    }
 }

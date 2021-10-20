@@ -23,6 +23,7 @@
         <entry key="app/src/main/res/layout/item_album.xml" value="0.30185185185185187" />
         <entry key="app/src/main/res/layout/item_explore.xml" value="0.29814814814814816" />
         <entry key="app/src/main/res/layout/item_report.xml" value="0.334375" />
+        <entry key="app/src/main/res/layout/select_dialog.xml" value="0.33958333333333335" />
         <entry key="app/src/main/res/menu/admin_options_explore.xml" value="0.334375" />
         <entry key="app/src/main/res/menu/admin_options_explore1.xml" value="0.334375" />
         <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.30648148148148147" />

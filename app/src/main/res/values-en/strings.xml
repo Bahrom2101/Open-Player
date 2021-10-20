@@ -25,7 +25,6 @@
     <string name="uploaded">Uploaded</string>
     <string name="describe_your_report">Describe your report</string>
     <string name="send_report">Send report</string>
-    <string name="give_me_one_music_at_least_per_day_for_using_other_musics">Give me one music at least per day for using other musics</string>
     <string name="save">Save</string>
     <string name="unsave">Unsave</string>
     <string name="download">Download</string>
@@ -35,4 +34,9 @@
     <string name="upload_one_music_to_download">Upload one music to download</string>
     <string name="downloading_process_is_started"><![CDATA[Downloading process is started]]></string>
     <string name="audio_downloaded"><![CDATA[Downloaded]]></string>
+    <string name="permission_title">Permission</string>
+    <string name="permission_message">The app uploads one music to the system every week for listening and downloading other musics.Will you give permission ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
 </resources>

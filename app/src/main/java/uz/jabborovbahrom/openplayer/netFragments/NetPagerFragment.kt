@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.ContentUris
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import io.grpc.okhttp.internal.Util
 import io.reactivex.schedulers.Schedulers
 import jabborovbahrom.openplayer.R
 import jabborovbahrom.openplayer.databinding.*
@@ -89,19 +91,6 @@ class NetPagerFragment : Fragment() {
 
         binding.rv.setHasFixedSize(true)
 
-        firebaseFirestore.collection("permission")
-            .document("permission")
-            .get()
-            .addOnSuccessListener {
-                val permission = it.toObject(Permission::class.java)
-                if (permission?.canUseContents!!) {
-                    val calendar = Calendar.getInstance()
-                    val forDay = SimpleDateFormat("dd")
-                    val day = forDay.format(calendar.time).toInt()
-                    Utils.uploadSong(day, 0L, requireContext())
-                }
-            }
-
         when (param1) {
             1 -> {
                 setupAdapter()
@@ -146,73 +135,18 @@ class NetPagerFragment : Fragment() {
                             playPauseButton: ImageView
                         ) {
                             if (NetworkHelper(requireContext()).isNetworkConnected()) {
-                                if (!UploadService.isUploading) {
-                                    val calendar = Calendar.getInstance()
-                                    val forDay = SimpleDateFormat("dd")
-                                    val day = forDay.format(calendar.time).toInt()
-                                    val uploadedDay = Utils.getUploadedDay(requireContext())
-                                    if (uploadedDay != -1 && uploadedDay == day) {
-                                        try {
-                                            val intent =
-                                                Intent(requireActivity(), SongService::class.java)
-                                            intent.action = SongService.ACTION_PAUSE
-                                            requireActivity().startService(intent)
-                                            playFirebase(
-                                                songFirebaseDb.title,
-                                                songFirebaseDb.downloadUrl,
-                                                songFirebaseDb.duration
-                                            )
-                                        } catch (e: java.lang.Exception) {
-                                        }
-                                    } else {
-                                        val allSong = appDatabase.songDao().getAllSongNotUploaded()
-                                        val customDialog =
-                                            SelectDialogBinding.inflate(
-                                                LayoutInflater.from(requireContext()),
-                                                null,
-                                                false
-                                            )
-                                        val dialog = AlertDialog.Builder(requireContext()).create()
-                                        dialog.setView(customDialog.root)
-                                        val uploadAdapter =
-                                            UploadAdapter(
-                                                allSong,
-                                                object : UploadAdapter.OnClickListener {
-                                                    override fun onUploadClick(
-                                                        song: Song,
-                                                        position: Int
-                                                    ) {
-                                                        if (song.size <= 20000000) {
-                                                            uploadClick(song, day)
-                                                            Toast.makeText(
-                                                                requireContext(),
-                                                                getString(R.string.uploading_process_is_started_You_will_have_permission_after_uploading),
-                                                                Toast.LENGTH_LONG
-                                                            ).show()
-                                                        } else {
-                                                            Toast.makeText(
-                                                                requireContext(),
-                                                                getString(R.string.maximum_size_might_be_20_mb),
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
-                                                        }
-                                                        dialog.dismiss()
-                                                    }
-                                                })
-                                        customDialog.rv.adapter = uploadAdapter
-
-                                        customDialog.back.setOnClickListener {
-                                            dialog.dismiss()
-                                        }
-
-                                        dialog.show()
-                                    }
+                                if (!Utils.getPermission(requireContext())) {
+                                    popupDialog()
                                 } else {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        getString(R.string.uploading_on_process),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    playFirebase(
+                                        songFirebaseDb.title,
+                                        songFirebaseDb.downloadUrl,
+                                        songFirebaseDb.duration
+                                    )
+                                    val intent =
+                                        Intent(requireActivity(), SongService::class.java)
+                                    intent.action = SongService.ACTION_PAUSE
+                                    requireActivity().startService(intent)
                                 }
                             } else {
                                 Toast.makeText(
@@ -245,11 +179,9 @@ class NetPagerFragment : Fragment() {
                                     }
                                     R.id.download1 -> {
                                         if (NetworkHelper(requireContext()).isNetworkConnected()) {
-                                            val calendar = Calendar.getInstance()
-                                            val forDay = SimpleDateFormat("dd")
-                                            val day = forDay.format(calendar.time).toInt()
-                                            val uploadedDay = Utils.getUploadedDay(requireContext())
-                                            if (uploadedDay != -1 && uploadedDay == day) {
+                                            if (!Utils.getPermission(requireContext())) {
+                                                popupDialog()
+                                            } else {
                                                 reference.child(songFirebaseDb.uid).downloadUrl.addOnSuccessListener { uri ->
                                                     val extension =
                                                         songFirebaseDb.displayName.substring(
@@ -273,12 +205,6 @@ class NetPagerFragment : Fragment() {
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }
-                                            } else {
-                                                Toast.makeText(
-                                                    requireContext(),
-                                                    getString(R.string.upload_one_music_to_download),
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
                                             }
                                         } else
                                             Toast.makeText(
@@ -318,6 +244,23 @@ class NetPagerFragment : Fragment() {
         return binding.root
     }
 
+    private fun popupDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.permission_title))
+            .setMessage(getString(R.string.permission_message))
+            .setCancelable(false)
+            .setPositiveButton(getString(R.string.yes)) { dialogInterface: DialogInterface, _: Int ->
+                Utils.setPermission(true, requireContext())
+                uploadClick()
+            }
+            .setNegativeButton(getString(R.string.no)) { dialogInterface: DialogInterface, _: Int ->
+                Utils.setPermission(false, requireContext())
+            }
+        val create = builder.create()
+        create.setCanceledOnTouchOutside(false)
+        create.show()
+    }
+
     private fun setupAdapter() {
 
         // Init Paging Configuration
@@ -350,72 +293,31 @@ class NetPagerFragment : Fragment() {
                             playPauseButton: ImageView
                         ) {
                             if (NetworkHelper(requireContext()).isNetworkConnected()) {
-                                if (!UploadService.isUploading) {
-                                    val calendar = Calendar.getInstance()
-                                    val forDay = SimpleDateFormat("dd")
-                                    val day = forDay.format(calendar.time).toInt()
-                                    val uploadedDay = Utils.getUploadedDay(requireContext())
-                                    if (uploadedDay != -1 && uploadedDay == day) {
-                                        try {
-                                            playFirebase(
-                                                songFirebase.title!!,
-                                                songFirebase.downloadUrl!!,
-                                                songFirebase.duration!!
-                                            )
-                                            val intent =
-                                                Intent(requireActivity(), SongService::class.java)
-                                            intent.action = SongService.ACTION_PAUSE
-                                            requireActivity().startService(intent)
-                                        } catch (e: java.lang.Exception) {
+                                if (!Utils.getPermission(requireContext())) {
+                                    val builder = AlertDialog.Builder(requireContext())
+                                        .setTitle(getString(R.string.permission_title))
+                                        .setMessage(getString(R.string.permission_message))
+                                        .setCancelable(false)
+                                        .setPositiveButton(getString(R.string.yes)) { dialogInterface: DialogInterface, _: Int ->
+                                            Utils.setPermission(true, requireContext())
+                                            uploadClick()
                                         }
-
-                                    } else {
-                                        val allSong = appDatabase.songDao().getAllSongNotUploaded()
-                                        val customDialog =
-                                            SelectDialogBinding.inflate(
-                                                LayoutInflater.from(requireContext()),
-                                                null,
-                                                false
-                                            )
-                                        val dialog = AlertDialog.Builder(requireContext()).create()
-                                        dialog.setView(customDialog.root)
-                                        val uploadAdapter =
-                                            UploadAdapter(
-                                                allSong,
-                                                object : UploadAdapter.OnClickListener {
-                                                    override fun onUploadClick(
-                                                        song: Song,
-                                                        position: Int
-                                                    ) {
-                                                        if (song.size <= 20000000) {
-                                                            uploadClick(song, day)
-                                                            Toast.makeText(
-                                                                requireContext(),
-                                                                getString(R.string.uploading_process_is_started_You_will_have_permission_after_uploading),
-                                                                Toast.LENGTH_LONG
-                                                            ).show()
-                                                        } else {
-                                                            Toast.makeText(
-                                                                requireContext(),
-                                                                getString(R.string.maximum_size_might_be_20_mb),
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
-                                                        }
-                                                        dialog.dismiss()
-                                                    }
-                                                })
-                                        customDialog.rv.adapter = uploadAdapter
-                                        customDialog.back.setOnClickListener {
-                                            dialog.dismiss()
+                                        .setNegativeButton(getString(R.string.no)) { dialogInterface: DialogInterface, _: Int ->
+                                            Utils.setPermission(false, requireContext())
                                         }
-                                        dialog.show()
-                                    }
+                                    val create = builder.create()
+                                    create.setCanceledOnTouchOutside(false)
+                                    create.show()
                                 } else {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        getString(R.string.uploading_on_process),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    playFirebase(
+                                        songFirebase.title!!,
+                                        songFirebase.downloadUrl!!,
+                                        songFirebase.duration!!
+                                    )
+                                    val intent =
+                                        Intent(requireActivity(), SongService::class.java)
+                                    intent.action = SongService.ACTION_PAUSE
+                                    requireActivity().startService(intent)
                                 }
                             } else {
                                 Toast.makeText(
@@ -529,25 +431,23 @@ class NetPagerFragment : Fragment() {
                 }
                 R.id.download -> {
                     if (NetworkHelper(requireContext()).isNetworkConnected()) {
-                        val calendar = Calendar.getInstance()
-                        val forDay = SimpleDateFormat("dd")
-                        val day = forDay.format(calendar.time).toInt()
-                        val uploadedDay = Utils.getUploadedDay(requireContext())
-                        if (uploadedDay != -1 && uploadedDay == day) {
+                        if (!Utils.getPermission(requireContext())) {
+                            popupDialog()
+                        } else {
                             reference.child(songFirebase.uid!!).downloadUrl.addOnSuccessListener { uri ->
                                 val extension =
-                                    songFirebase.displayName?.substring(
+                                    songFirebase.displayName!!.substring(
                                         songFirebase.displayName!!.lastIndexOf(".")
                                     )
                                 val fileName =
-                                    songFirebase.displayName?.substring(
+                                    songFirebase.displayName!!.substring(
                                         0,
                                         songFirebase.displayName!!.lastIndexOf(".") - 1
                                     )
                                 downloadFile(
                                     requireContext(),
-                                    fileName!!,
-                                    extension!!,
+                                    fileName,
+                                    extension,
                                     Environment.DIRECTORY_MUSIC,
                                     uri.toString()
                                 )
@@ -557,12 +457,6 @@ class NetPagerFragment : Fragment() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-                        } else {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.upload_one_music_to_download),
-                                Toast.LENGTH_SHORT
-                            ).show()
                         }
                     } else
                         Toast.makeText(
@@ -574,25 +468,23 @@ class NetPagerFragment : Fragment() {
                 }
                 R.id.download1 -> {
                     if (NetworkHelper(requireContext()).isNetworkConnected()) {
-                        val calendar = Calendar.getInstance()
-                        val forDay = SimpleDateFormat("dd")
-                        val day = forDay.format(calendar.time).toInt()
-                        val uploadedDay = Utils.getUploadedDay(requireContext())
-                        if (uploadedDay != -1 && uploadedDay == day) {
+                        if (!Utils.getPermission(requireContext())) {
+                            popupDialog()
+                        } else {
                             reference.child(songFirebase.uid!!).downloadUrl.addOnSuccessListener { uri ->
                                 val extension =
-                                    songFirebase.displayName?.substring(
+                                    songFirebase.displayName!!.substring(
                                         songFirebase.displayName!!.lastIndexOf(".")
                                     )
                                 val fileName =
-                                    songFirebase.displayName?.substring(
+                                    songFirebase.displayName!!.substring(
                                         0,
                                         songFirebase.displayName!!.lastIndexOf(".") - 1
                                     )
                                 downloadFile(
                                     requireContext(),
-                                    fileName!!,
-                                    extension!!,
+                                    fileName,
+                                    extension,
                                     Environment.DIRECTORY_MUSIC,
                                     uri.toString()
                                 )
@@ -602,12 +494,6 @@ class NetPagerFragment : Fragment() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-                        } else {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.upload_one_music_to_download),
-                                Toast.LENGTH_SHORT
-                            ).show()
                         }
                     } else
                         Toast.makeText(
@@ -851,12 +737,8 @@ class NetPagerFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun uploadClick(song: Song, day: Int) {
+    fun uploadClick() {
         val intent = Intent(requireContext(), UploadService::class.java)
-        val bundle = Bundle()
-        bundle.putSerializable("song", song)
-        bundle.putInt("day", day)
-        intent.putExtra("bundle", bundle)
         requireActivity().startService(intent)
     }
 

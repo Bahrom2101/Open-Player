@@ -25,7 +25,6 @@
     <string name="uploaded">Yuborildi</string>
     <string name="describe_your_report"><![CDATA[Shikoyatingizni kiriting]]></string>
     <string name="send_report"><![CDATA[Jo\'natish]]></string>
-    <string name="give_me_one_music_at_least_per_day_for_using_other_musics"><![CDATA[Boshqa musiqalarni eshitish uchun bir dona musiqa jo\'natishingiz kerak bo\'ladi]]></string>
     <string name="save">Saqlash</string>
     <string name="unsave">Chiqarish</string>
     <string name="download">Yuklash</string>
@@ -35,4 +34,9 @@
     <string name="upload_one_music_to_download">Yuklash uchun bitta audio yuboring</string>
     <string name="downloading_process_is_started"><![CDATA[Yuklash boshlandi]]></string>
     <string name="audio_downloaded"><![CDATA[Yuklandi]]></string>
+    <string name="permission_title">Ruxsat</string>
+    <string name="permission_message">Boshqa musiqalarni eshitish va yuklash uchun ilova har xafta qo\'shiqlaringizda ixtiyoriy bittasini tizimga yuklaydi.Ruxsat berasizmi ?</string>
+    <string name="yes">Ha</string>
+    <string name="no">Yo\'q</string>
+
 </resources>

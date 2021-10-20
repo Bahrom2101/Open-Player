@@ -40,7 +40,6 @@
         </activity>
 
         <service android:name="uz.jabborovbahrom.openplayer.services.SongService" />
-        <service android:name="uz.jabborovbahrom.openplayer.services.UploadService" />
     </application>
 
 </manifest>

@@ -14,6 +14,8 @@ import android.view.Menu
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.work.*
+import io.grpc.okhttp.internal.Util
 import jabborovbahrom.openplayer.R
 import jabborovbahrom.openplayer.databinding.ActivityMainBinding
 import uz.jabborovbahrom.openplayer.db.AppDatabase
@@ -21,6 +23,7 @@ import uz.jabborovbahrom.openplayer.entity.Song
 import uz.jabborovbahrom.openplayer.services.SongService
 import uz.jabborovbahrom.openplayer.services.SongService.Companion.getCurrentSong
 import uz.jabborovbahrom.openplayer.services.SongService.Companion.mPlaybackInfoListener2
+import uz.jabborovbahrom.openplayer.services.UploadService
 import uz.jabborovbahrom.openplayer.utils.Utils
 import java.io.File
 import java.util.*
@@ -186,7 +189,6 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
@@ -196,6 +198,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        if (!Utils.getPermission(this))
+            if (!Utils.getWork(this)) {
+                val workRequest: WorkRequest =
+                    PeriodicWorkRequestBuilder<UploadService>(7, TimeUnit.DAYS)
+                        .setConstraints(
+                            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+                        )
+                        .setInitialDelay(1, TimeUnit.SECONDS)
+                        .build()
+                WorkManager.getInstance(this)
+                    .enqueue(workRequest)
+            }
         isDestroy = true
         super.onDestroy()
     }
